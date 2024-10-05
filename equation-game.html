@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Sistemas de Equações</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:focus {
+            outline: 3px solid #45a049;
+        }
+        input {
+            width: 50px;
+            padding: 5px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #equations, #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jogo de Sistemas de Equações</h1>
+        <button id="instructionsBtn" aria-expanded="false">Instruções</button>
+        <div id="instructions" class="hidden">
+            <p>Resolva o sistema de equações do primeiro grau. Digite os valores de x e y nos campos correspondentes e clique em "Conferir" para verificar sua resposta.</p>
+        </div>
+        <button id="playBtn">Jogar</button>
+        <div id="gameArea" class="hidden">
+            <div id="equations"></div>
+            <label for="xInput">Valor de x:</label>
+            <input type="number" id="xInput" aria-label="Digite o valor de x">
+            <label for="yInput">Valor de y:</label>
+            <input type="number" id="yInput" aria-label="Digite o valor de y">
+            <button id="checkBtn">Conferir</button>
+            <div id="result" aria-live="polite"></div>
+            <button id="playAgainBtn" class="hidden">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        const instructionsBtn = document.getElementById('instructionsBtn');
+        const instructions = document.getElementById('instructions');
+        const playBtn = document.getElementById('playBtn');
+        const gameArea = document.getElementById('gameArea');
+        const equations = document.getElementById('equations');
+        const xInput = document.getElementById('xInput');
+        const yInput = document.getElementById('yInput');
+        const checkBtn = document.getElementById('checkBtn');
+        const result = document.getElementById('result');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+
+        let correctX, correctY;
+
+        instructionsBtn.addEventListener('click', () => {
+            const expanded = instructionsBtn.getAttribute('aria-expanded') === 'true' || false;
+            instructionsBtn.setAttribute('aria-expanded', !expanded);
+            instructions.classList.toggle('hidden');
+        });
+
+        playBtn.addEventListener('click', startGame);
+        checkBtn.addEventListener('click', checkAnswer);
+        playAgainBtn.addEventListener('click', startGame);
+
+        function startGame() {
+            gameArea.classList.remove('hidden');
+            playBtn.classList.add('hidden');
+            playAgainBtn.classList.add('hidden');
+            result.textContent = '';
+            generateEquations();
+        }
+
+        function generateEquations() {
+            correctX = Math.floor(Math.random() * 10) - 5;
+            correctY = Math.floor(Math.random() * 10) - 5;
+
+            const a1 = Math.floor(Math.random() * 5) + 1;
+            const b1 = Math.floor(Math.random() * 5) + 1;
+            const c1 = a1 * correctX + b1 * correctY;
+
+            const a2 = Math.floor(Math.random() * 5) + 1;
+            const b2 = Math.floor(Math.random() * 5) + 1;
+            const c2 = a2 * correctX + b2 * correctY;
+
+            equations.innerHTML = `
+                <p>${a1}x + ${b1}y = ${c1}</p>
+                <p>${a2}x + ${b2}y = ${c2}</p>
+            `;
+        }
+
+        function checkAnswer() {
+            const userX = parseInt(xInput.value);
+            const userY = parseInt(yInput.value);
+
+            if (isNaN(userX) || isNaN(userY)) {
+                result.textContent = 'Por favor, digite números válidos para x e y.';
+                return;
+            }
+
+            if (userX === correctX && userY === correctY) {
+                result.textContent = 'Parabéns! Sua resposta está correta.';
+                playAgainBtn.classList.remove('hidden');
+            } else {
+                result.textContent = `Desculpe, essa não é a resposta correta. A resposta correta é x = ${correctX} e y = ${correctY}.`;
+                playAgainBtn.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
